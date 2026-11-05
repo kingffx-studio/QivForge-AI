@@ -917,8 +917,10 @@ void RendererViewport::draw_viewports(bool p_swap_buffers) {
 
 				// Sometimes the openxr swapchain has been recreated but the viewport has not been
 				// reconfigured yet, though they should be by the next frame.
-				ERR_CONTINUE(region.position.x + region.size.width > vp->internal_size.width ||
-						region.position.y + region.size.height > vp->internal_size.height);
+				const bool region_uses_logical_coordinates = xr_interface->get_vrs_texture_format() == XRInterface::XR_VRS_TEXTURE_FORMAT_RASTERIZATION_RATE_MAP;
+				ERR_CONTINUE(!region_uses_logical_coordinates &&
+						(region.position.x + region.size.width > vp->internal_size.width ||
+								region.position.y + region.size.height > vp->internal_size.height));
 
 				RSG::texture_storage->render_target_set_render_region(vp->render_target, region);
 
